@@ -1,38 +1,43 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as nm
+import matplotlib.pyplot as mtp
 import pandas as pd
-import sklearn
-
-
-dataset = pd.read_csv('Social_Network_Ads.csv')
-X = dataset.iloc[:, [1, 2, 3]].values
-y = dataset.iloc[:, -1].values
-
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-X[:,0] = le.fit_transform(X[:,0])
-
+data_set= pd.read_csv('Salary_Data.csv')
+data_set
+x= data_set.iloc[:, :-1].values
+y= data_set.iloc[:, 1].values
+x
+y
+# Splitting the dataset into training and test set.
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, 
-random_state = 0)
-
-
-from sklearn.preprocessing import StandardScaler
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-
-from sklearn.neighbors import KNeighborsClassifier
-classifier = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p 
-= 2)
-classifier.fit(X_train, y_train)
-
-y_pred = classifier.predict(X_test)
-
+x_train, x_test, y_train, y_test= train_test_split(x, y, test_size= 1/3, random_state=0)
+x_train
+x_test
+y_train
 y_test
 
-y_pred
+#Fitting the Simple Linear Regression model to the training dataset
+from sklearn.linear_model import LinearRegression
+regressor= LinearRegression()
+regressor.fit(x_train, y_train)
 
-from sklearn.metrics import confusion_matrix,accuracy_score
-cm = confusion_matrix(y_test, y_pred)
-ac = accuracy_score(y_test,y_pred)
+#Prediction of Test and Training set result
+y_pred= regressor.predict(x_test)
+x_pred= regressor.predict(x_train) 
+
+y_pred
+x_pred
+
+mtp.scatter(x_train, y_train, color="green")
+mtp.plot(x_train, x_pred, color="red")
+mtp.title("Salary vs Experience (Training Dataset)")
+mtp.xlabel("Years of Experience")
+mtp.ylabel("Salary(In Rupees)")
+mtp.show() 
+
+#visualizing the Test set results
+mtp.scatter(x_test, y_test, color="blue")
+mtp.plot(x_train, x_pred, color="red")
+mtp.title("Salary vs Experience (Test Dataset)")
+mtp.xlabel("Years of Experience")
+mtp.ylabel("Salary(In Rupees)")
+mtp.show() 
