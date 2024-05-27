@@ -1,71 +1,45 @@
-
-import numpy as np
 import pandas as pd
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt# input
+x = dataset.iloc[:, [2, 3]].values
+# output
+y = dataset.iloc[:, 4].valuesfrom sklearn.model_selection
+import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.25, random_state = 0)
 
-data = load_iris()
+from sklearn.preprocessing import StandardScaler
+sc_x = StandardScaler()
+xtrain = sc_x.fit_transform(xtrain)
+xtest = sc_x.transform(xtest)
+print (xtrain[0:10, :])
 
-X=data.data
-y=data.target
+from sklearn.linear_model import LogisticRegression
+classifier = LogisticRegression(random_state = 0)
+classifier.fit(xtrain, ytrain)
 
-y = pd.get_dummies(y).values
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(ytest, y_pred)
+print ("Confusion Matrix : \n", cm)
 
-y[:3]
+from sklearn.metrics import accuracy_score
+print ("Accuracy : ", accuracy_score(ytest, y_pred))
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=20, 
-random_state=4)
-
-learning_rate = 0.1
-iterations = 5000
-N = y_train.size
-input_size = 4
-hidden_size = 2 
-output_size = 3 
-results = pd.DataFrame(columns=["mse", "accuracy"])
-
-np.random.seed(10)
-W1 = np.random.normal(scale=0.5, size=(input_size, hidden_size)) 
-W2 = np.random.normal(scale=0.5, size=(hidden_size , output_size)) 
-
-def sigmoid(x):
- return 1 / (1 + np.exp(-x))
-def mean_squared_error(y_pred, y_true):
- return ((y_pred - y_true)**2).sum() / (2*y_pred.size)
- 
-def accuracy(y_pred, y_true):
- acc = y_pred.argmax(axis=1) == y_true.argmax(axis=1)
- return acc.mean()
-
-for itr in range(iterations): 
- Z1 = np.dot(x_train, W1)
- A1 = sigmoid(Z1)
-
- Z2 = np.dot(A1, W2)
- A2 = sigmoid(Z2)
- 
- mse = mean_squared_error(A2, y_train)
- acc = accuracy(A2, y_train)
- results=results.append({"mse":mse, "accuracy":acc},ignore_index=True )
- 
- E1 = A2 - y_train
- dW1 = E1 * A2 * (1 - A2)
- E2 = np.dot(dW1, W2.T)
- dW2 = E2 * A1 * (1 - A1)
-
- W2_update = np.dot(A1.T, dW1) / N
- W1_update = np.dot(x_train.T, dW2) / N
- W2 = W2 - learning_rate * W2_update
- W1 = W1 - learning_rate * W1_update
-
-results.mse.plot(title="Mean Squared Error")
-
-results.accuracy.plot(title="Accuracy")
-
-Z1 = np.dot(x_test, W1)
-A1 = sigmoid(Z1)
-Z2 = np.dot(A1, W2)
-A2 = sigmoid(Z2)
-acc = accuracy(A2, y_test)
-print("Accuracy: {}".format(acc))
+from matplotlib.colors import ListedColormap
+X_set, y_set = xtest, ytest
+X1, X2 = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1,
+stop = X_set[:, 0].max() + 1, step = 0.01),
+ np.arange(start = X_set[:, 1].min() - 1,
+stop = X_set[:, 1].max() + 1, step = 0.01))
+plt.contourf(X1, X2, classifier.predict(
+ np.array([X1.ravel(), X2.ravel()]).T).reshape(
+ X1.shape), alpha = 0.75, cmap = ListedColormap(('red', 'green')))
+plt.xlim(X1.min(), X1.max())
+plt.ylim(X2.min(), X2.max())
+for i, j in enumerate(np.unique(y_set)):
+ plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
+ c = ListedColormap(('red', 'green'))(i), label = j)
+plt.title('Classifier (Test set)')
+plt.xlabel('Age')
+plt.ylabel('Estimated Salary')
+plt.legend()
+plt.show()
