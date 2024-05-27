@@ -1,35 +1,90 @@
+#Importing the necessary libraries
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-
-dataset = pd.read_csv('IrisDataset.csv')
-X = dataset.iloc[:,:4].values
-y = dataset['species'].values
-dataset.head(5)
-
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
-
-
-from sklearn.preprocessing import StandardScaler
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-
-from sklearn.naive_bayes import GaussianNB
-classifier = GaussianNB()
-classifier.fit(X_train, y_train)
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
+%matplotlib inline
+#Reading the excel file
+data=pd.read_excel("Mall_Customers.xlsx")
+data.head()
 
 
-y_pred = classifier.predict(X_test) 
-y_pred
+#Distribution of Annnual Income
+plt.figure(figsize=(10, 6))
+sns.set(style = 'whitegrid')
+sns.distplot(data['Annual Income (k$)'])
+plt.title('Distribution of Annual Income (k$)', fontsize = 20)
+plt.xlabel('Range of Annual Income (k$)')
+plt.ylabel('Count')
 
-from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test, y_pred)
-from sklearn.metrics import accuracy_score 
-print ("Accuracy : ", accuracy_score(y_test, y_pred))
-cm
+#Distribution of age
+plt.figure(figsize=(10, 6))
+sns.set(style = 'whitegrid')
+sns.distplot(data['Age'])
+plt.title('Distribution of Age', fontsize = 20)
+plt.xlabel('Range of Age')
+plt.ylabel('Count')
 
-df = pd.DataFrame({'Real Values':y_test, 'Predicted Values':y_pred})
-df
+#Distribution of spending score
+plt.figure(figsize=(10, 6))
+sns.set(style = 'whitegrid')
+sns.distplot(data['Spending Score (1-100)'])
+plt.title('Distribution of Spending Score (1-100)', fontsize = 20)
+plt.xlabel('Range of Spending Score (1-100)')
+plt.ylabel('Count')
 
+genders = data.Gender.value_counts()
+sns.set_style("darkgrid")
+plt.figure(figsize=(10,4))
+sns.barplot(x=genders.index, y=genders.values)
+plt.show()
+
+df1=data[["CustomerID","Gender","Age","Annual Income (k$)","Spending Score (1-100)"]]
+X=df1[["Annual Income (k$)","Spending Score (1-100)"]]
+#The input data
+X.head()
+
+#Scatterplot of the input data
+plt.figure(figsize=(10,6))
+sns.scatterplot(x = 'Annual Income (k$)',y = 'Spending Score (1-100)', data = X ,s = 60 )
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.title('Spending Score (1-100) vs Annual Income (k$)')
+plt.show()
+
+#Importing KMeans from sklearn
+from sklearn.cluster import KMeans
+wcss=[]
+for i in range(1,11):
+ km=KMeans(n_clusters=i)
+ km.fit(X)
+ wcss.append(km.inertia_)
+#The elbow curve
+plt.figure(figsize=(12,6))
+plt.plot(range(1,11),wcss)
+plt.plot(range(1,11),wcss, linewidth=2, color="red", marker ="8")
+plt.xlabel("K Value")
+plt.xticks(np.arange(1,11,1))
+plt.ylabel("WCSS")
+plt.show()
+
+#Taking 5 clusters
+km1=KMeans(n_clusters=5)
+#Fitting the input data
+km1.fit(X)
+#predicting the labels of the input data
+y=km1.predict(X)
+#adding the labels to a column named label
+df1["label"] = y
+#The new dataframe with the clustering done
+df1.head()
+
+plt.figure(figsize=(10,6))
+sns.scatterplot(x = 'Annual Income (k$)',y = 'Spending Score (1-100)',hue="label",
+ palette=['green','orange','brown','dodgerblue','red'], legend='full',data =
+df1 ,s = 60 )
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.title('Spending Score (1-100) vs Annual Income (k$)')
+plt.show()
