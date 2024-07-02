@@ -3,11 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xu</title>
+    <title>Pr0gram.ipynb</title>
 </head>
 <body>
     <ul>
-        <li><a href="OOPS Lab Programs.pdf">OOPS</a></li>
+        <li><a href="ML.pdf">MLMAN</a></li>
+        <li>
+            <a href="p1.py" download>p1</a>
+            <button onclick="copyFileContent('p1.py')">C</button>
+        </li>
+        <li>
+            <a href="p2.py" download>p2</a>
+            <button onclick="copyFileContent('p2.py')">C</button>
+        </li>
+        <li>
+            <a href="p3.py" download>p3</a>
+            <button onclick="copyFileContent('p3.py')">C</button>
+        </li>
+        <li>
+            <a href="p4.py" download>p4</a>
+            <button onclick="copyFileContent('p4.py')">C</button>
+        </li>
+        <li>
+            <a href="p5.py" download>p5</a>
+            <button onclick="copyFileContent('p5.py')">C</button>
+        </li>
+        <li>
+            <a href="p6.py" download>p6</a>
+            <button onclick="copyFileContent('p6.py')">C</button>
+        </li>
+        <li>
+            <a href="p7.py" download>p7</a>
+            <button onclick="copyFileContent('p7.py')">C</button>
+        </li>
+        <li>
+            <a href="p8.py" download>p8</a>
+            <button onclick="copyFileContent('p8.py')">C</button>
+        </li>
+        <li>
+            <a href="p9.py" download>p9</a>
+            <button onclick="copyFileContent('p9.py')">C</button>
+        </li>
+        <li>
+            <a href="p10.py" download>p10</a>
+            <button onclick="copyFileContent('p10.py')">C</button>
+        </li>
     </ul>
+
+    <script>
+    function copyFileContent(filename) {
+        fetch(filename)
+            .then(response => response.text())
+            .then(text => {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('File content copied to clipboard!');
+                }, () => {
+                    alert('Failed to copy file content.');
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch file content.');
+            });
+    }
+    </script>
 </body>
 </html>
